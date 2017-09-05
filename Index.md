@@ -34,6 +34,22 @@ Python交换式IDE环境:
 
 #### 1.3.1 使用文本编辑器
 
+文本编辑器(把IDE也写进去了)推荐：
+
+1. Sublime Text 2/3 收费
+2. Notepad++ 免费
+3. Visual Studio Code(VS Cod大法好) 免费
+4. PyCharm 收费
+5. Atom(Github出品) 免费
+
+[test.py](test.py)
+
+```python
+print(100+200)
+```
+
+执行python文件test.py，在命令行中，切换到该文件所在目录，然后输入`python test.py`即可执行。
+
 
 #### 1.3.2 Python代码运行助手
 
