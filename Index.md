@@ -62,11 +62,17 @@ Python代码运行助手可以让你在线输入Python代码，然后通过本�
 ![运行](run_python_assistant.png)
 ![运行](run_result.png)
 
-
-
 #### 1.3.3 输入和输出
 
+`print('The quick brown fox','jumps over','the lazy dog')`
+
+The quick brown fox jumps over the lazy dog.
+覆盖了英文的2个字母，通常这句话用来测试。中文对应的有永字八法，千字文等。
+
 ### 1.4 Python基础
+
+Python使用缩进来组织代码块，遵守约定俗成的习惯，使用4个空格的缩进(Tab)。
+在文本编辑器(IDE)中，设置Tab自动转换为4个空格，确保不混用Tab和空格。
 
 #### 1.4.1 数据类型和变量
 
