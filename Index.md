@@ -102,9 +102,27 @@ Python程序是大小写敏感的，如果写错了大小写，程序会报错�
 
 #### 1.4.3 使用list和tuple
 
+`list`可变，`pop()`,`append()`,`len()`     
+`tuple`不可变，在定义tuple的时候,tuple的元素就必须被确定下来。        
+list和tuple是Python内置的有序集合，一个可变，一个不可变
+
 #### 1.4.4 条件判断
 
+`if`判断简写：
+
+```python
+if x:
+    print("True")
+```
+
+只要x是非零数值、非空字符串、非空list等，就判断为True，否则为False。
+
+`if`语句执行是从上往下判断，如果在某个判断上是True，把该判断对应的语句执行后，就忽略掉剩下的elif和else，在写`if`判断的时候一定要注意逻辑顺序。
+
 #### 1.4.5 循环
+
+`for`
+`while`
 
 #### 1.4.6 使用dict和set
 
