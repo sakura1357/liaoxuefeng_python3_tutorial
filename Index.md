@@ -55,11 +55,12 @@ print(100+200)
 Python代码运行助手可以让你在线输入Python代码，然后通过本机运行的一个Python脚本来执行代码。
 这个有点酷炫啊，在本机开了一个http服务。
 
-启动Python运行助手：
+启动Python运行助手：       
 ![启动Python运行助手](python_run_assistant.png)
 
-运行结果：
-![运行](run_python_assistant.png)
+运行结果：       
+![运行](run_python_assistant.png)     
+
 ![运行](run_result.png)
 
 #### 1.3.3 输入和输出
