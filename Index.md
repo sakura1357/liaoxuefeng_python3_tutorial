@@ -253,11 +253,181 @@ def calc(*nums):
 
 ### 2.1 高级特性
 
-    切片
-    迭代
-    列表生成式
-    生成器
-    迭代器
+Python,代码不是越多越好，而是越少越好；代码不是越复杂越好，而是越简单越好。
+代码越少，开发效率越高。
+
+#### 2.1.1 切片
+
+适用类型：list,tuple,str
+`list[0:3]`正切片，从左往右取，索引0,1,2,...,len(list)-1
+`list[-2:]`倒切片，从右往左取，索引-1,-2,...,-len(list)
+
+#### 2.1.2 迭代
+
+适用类型：可迭代对象(list,tuple,dict,str),自定义的符合迭代条件的数据类型。
+
+`for ... in ... : `
+
+```python
+# 迭代list
+for value in ['a', 'b', 'c':
+    print(value)
+
+# 类似Java使用下标循环,调用enumerate函数把list变成索引-元素对
+for i, value in enumerate(['a', 'b', 'c']):
+    print(i, value)
+```
+
+```python
+# 迭代str
+for i in 'ABCDEFG':
+    print(i)
+```
+
+```python
+# 迭代dict，默认是key
+d = [1:'a', 2:'b', 3:'c']
+for key in d:
+    print(key)
+
+# 迭代dict的value
+for value in d.values():
+    print(value)
+
+# 迭代dict, key,value同时迭代
+for k,v in d.items():
+    print(k, v)
+```
+
+```python
+# 迭代时引用两个变量
+for x,y in [(1, 1), (2, 4), (3, 9)]:
+    print(x, y)
+```
+
+判断一个对象是否为可迭代对象：返回True或者False
+>`isinstnce(object, collections.Iterable)`
+
+```python
+from collections import Iterable
+print(isinstance('abcde', Iterable))
+
+```
+
+#### 2.1.3 列表生成式
+
+列表生成式List Comprehensions,用来创建list的生成式。
+
+```python
+# 生成[1x1, 2x2, 3x3, ..., 10x10]
+[x * x for x in range(1, 11)]
+# [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+# for循环后面可以跟判断,筛选出仅偶数的平方
+[x * x for x in range(1, 11) if x % 2 == 0]
+# [4, 16, 36, 64, 100]
+
+# 可以使用两层循环，生成全排列
+[ m + n for m in 'ABC' for n in 'XYZ']
+#　['AX', 'AY', 'AZ', 'BX', 'BY', 'BZ', 'CX', 'CY', 'CZ']
+
+# 循环前可以调用函数
+# 把list中的所有字符变成小写
+L = ['Hello', 'World', 'Visual', 'Studio', 'Code']
+[s.lower() for s in L]
+# ['hello', 'world', 'visual', 'studio', 'code']
+
+#　列表生成式中的for循环使用迭代相关特性
+#　使用两个变量生成list
+
+d = {'x':'A', 'y':'B', 'z':'C'}
+[k + '=' + v for k, v in d.items()]
+# ['x=A', 'y=B', 'z=C']
+```
+
+应用举例：
+
+```python
+# 列出当前目录下的所有文件和目录名
+# os.listdir()可以列出文件和目录
+
+import os
+[d forf d in os.listdir('.')]
+```
+
+#### 2.1.4 生成器
+
+生成器(generator):可迭代对象，只保存算法，一边循环一边计算，节约了内存空间。        
+定义generator的方式：     
+1.使用`()`的创建的列表生成式:(x * x for x in range(1, 11))     
+2.使用`yield`关键字在函数中声明
+
+
+>1.使用`()`的创建的列表生成式：
+
+```python
+# L是个使用列表生成式生成的list
+L = [x * x for x in range(1, 11)]
+# 可以直接输出L的每一个元素
+print(L)
+
+# g是个generator,使用()的创建的列表生成式
+g = (x * x for x in range(1, 11))
+# 输出generator的每一个元素，可以使用next函数
+>>> next(g)
+1
+>>> next(g)
+4
+>>> next(g)
+9
+>>> next(g)
+16
+>>> next(g)
+25
+>>> next(g)
+36
+>>> next(g)
+49
+>>> next(g)
+64
+>>> next(g)
+81
+>>> next(g)
+100
+>>> next(g)
+Traceback (most recent call last):
+  File "<pyshell#23>", line 1, in <module>
+    next(g)
+StopIteration
+# generator保存的是算法，每次调用next(g)，就计算g的下一个元素的值，直到计算最后一个元素，没有更多元素时，抛出StopIteration错误。
+# 正确做法是使用for循环
+for value in g:
+    print(value)
+
+```
+
+>2.使用`yield`关键字在函数中声明
+
+```python
+# 输出斐波那契数列
+# 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+
+# 常规做法：fib函数
+def fib(max):
+    n, a, b = 0, 0, 1
+    while n < max:
+        a, b = b, a+b
+        n = n + 1
+    return 'done'
+print(fib(6))
+
+#　
+
+```
+
+
+
+#### 2.1.5 迭代器
 
 ### 2.2 函数式编程
 
