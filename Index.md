@@ -421,7 +421,15 @@ def fib(max):
     return 'done'
 print(fib(6))
 
-#　
+a = fib
+
+#　test
+
+def fib(max):
+    n, a, b = 0, 0, 1
+    while n < max:
+        a, b = b, a+b
+        n = n + 1
 
 ```
 
@@ -429,10 +437,28 @@ print(fib(6))
 
 #### 2.1.5 迭代器
 
+>没怎么看懂
+
 ### 2.2 函数式编程
 
-    高阶函数
-    map/reduce
+
+
+#### 2.2.1 高阶函数
+
+
+#### 2.2.2 map/reduce
+
+```python
+# 利用map()函数，把用户输入的不规范的英文名字，变为首字母大写，其他小写的规范名字。输入：['adam', 'LISA', 'barT']，输出：['Adam', 'Lisa', 'Bart']：
+
+def normalize(name):
+    return name[0].upper() + name[1:len(name)].lower()
+
+L1 = ['sakura','mAPLE']
+L2 = list(map(normalize, L1))
+print(L2)
+
+```
     filter
     sorted
     返回函数
