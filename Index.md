@@ -445,91 +445,304 @@ def fib(max):
 
 #### 2.2.1 高阶函数
 
-
-#### 2.2.2 map/reduce
+变量可以指向函数，即函数本身可以赋值给变量。
+高阶函数：一个函数接收另一个函数作为参数（把函数作为参数传入），这种函数就称之为高阶函数。类似于C语言中的指针。
 
 ```python
-# 利用map()函数，把用户输入的不规范的英文名字，变为首字母大写，其他小写的规范名字。输入：['adam', 'LISA', 'barT']，输出：['Adam', 'Lisa', 'Bart']：
+def add(x, y, f):
+    return f(x) + f(y)
 
+add(-5, 6, abs)
+"""
+x = -5
+y = 6
+f = abs # 将函数赋值给变量
+f(x) + f(y) = abs(-5) + abs(6) ===> 11
+return 11
+
+"""
+
+```
+
+##### 2.2.1.1 map/reduce
+
+Python內建`map()`和`reduce()`函数。
+>1. `map()`函数接收两个参数，一个是函数，一个`Iterable`(可迭代序列)，`map`将传入的函数依次作用到序列的每个元素，并把结果作为新的`Iterator`(惰性序列)返回。实际是对运算规则进行抽象，方便计算任意复杂的函数。
+
+```python
+# 举例：序列元素求平方
+
+def f(x):
+    return x * x
+
+result = map(f, [1, 2, 3, 4, 5, 6, 7, 8])
+print(list(result))
+# [1, 4, 9, 16, 25, 36, 49, 64]
+```
+
+>2. `reduce()`函数，把一个函数`f(x, y)`作用在一个序列`[x1, x2, x3, ...]`上，这个函数`f(x, y)`必须接收两个参数(x, y)，`reduce()`把结果继续和序列的下一个元素做累积计算。
+
+```python
+# 举例：序列求和
+from functools import reduce
+def add(x, y):
+    return x + y
+
+reduce(add, [1, 3, 5, 7, 9])
+# add(add(add(add(1, 3), 5), 7), 9)
+# 1 + 3 + 5 + 7 + 9
+# 25
+```
+
+>3. `map()`和`reduce()`可以混合使用
+
+```python
+举例：把str转换成int
+
+from functools import reduce
+
+def str2int(s):
+    def fn(x, y):
+        return x * 10 + y
+    def char2num(s):
+        return {'0' : 0, '1' : 1, '2' : 2, '3' : 3, '4' : 4, '5' : 5, '6' : 6, '7' : 7, '8' : 8, '9' : 9}[s]
+    return reduce(fn, map(char2num, s))
+
+# str2int('13579')
+# 13579
+```
+
+可以使用`lambda`函数进一步简化：
+```python
+from functools import reduce
+
+def char2num(s):
+    return {'0' : 0, '1' : 1, '2' : 2, '3' : 3, '4' : 4, '5' : 5, '6' : 6, '7' : 7, '8' : 8, '9' : 9}[s]
+
+def str2int(s):
+    return reduce(lambda x, y: x * 10 + y, map(char2num, s))
+
+# str2int('13579')
+# 13579
+
+```
+
+
+## 练习：
+
+1.利用`map()`函数，把用户输入的不规范的英文名字，变为首字母大写，其他小写的规范名字。输入：`['adam', 'LISA', 'barT']`，输出：`['Adam', 'Lisa', 'Bart']`
+
+```python
 def normalize(name):
     return name[0].upper() + name[1:len(name)].lower()
 
-L1 = ['sakura','mAPLE']
+L1 = ['adam', 'LISA', 'barT']
 L2 = list(map(normalize, L1))
 print(L2)
+# 'Adam', 'Lisa', 'Bart']
+```
+
+2.Python提供的`sum()`函数可以接收一个list并求和，请编写一个`prod()`函数，可以接收一个list并利用`reduce()`求积。
+
+```python
+from functools import reduce
+
+def prod(L):
+    def multiply(x, y):
+        return x * y
+    return reduce(multiply, L)
+
+print('3 * 5 * 7 * 9 =', prod([3, 5, 7, 9])
+```
+
+3.利用`map()`和`reduce()`编写一个`str2float`函数，把字符串`'123.456'`转换成浮点数`123.456`
+
+```python
+from functools import reduce
+
+def str2float(s):
+    # 字符转数字
+    def char2num(s):
+        return {'0' : 0, '1' : 1, '2' : 2, '3' : 3, '4' : 4, '5' : 5, '6' : 6, '7' : 7, '8' : 8, '9' : 9, '.' : '.'}[s]
+
+    # 整数部分
+    def fn(x, y):
+        return x * 10 + y
+
+    # 切割字符串并进行处理计算
+    [s1, s2] = s.split('.')
+
+    # 整数部分正常计算 [1, 2, 3]，fn(fn(1, 2), 3) = (1 * 10 + 2) * 10 + 3 = 123
+    float_integer = reduce(fn, list(map(char2num, s1)))
+    # 小数部分: [4, 5, 6]先按照整数部分计算得456，然后除以10^len(s2)，10^3=1000
+    # 456/1000 = 0.456
+    # ** 表示幂计算，乘方，10**3，即10的3次方
+    float_decimal = reduce(fn, list(map(char2num, s2)))/(10 ** len(s2))
+    return float_integer + float_decimal
+
+print(str2float('123.456'))
+
+# lambda简化写法
+
+def str2float(s):
+    # 字符转数字
+    def char2num(s):
+        return {'0' : 0, '1' : 1, '2' : 2, '3' : 3, '4' : 4, '5' : 5, '6' : 6, '7' : 7, '8' : 8, '9' : 9, '.' : '.'}[s]
+    s = s.split('.')
+    float_integer = reduce(lambda x, y: x * 10 + y, map(char2num ,s[0]))
+    float_decimal = reduce(lambda x, y: x * 10 + y, map(char2num ,s[1]))/(10 ** len(s[1]))
 
 ```
-    filter
-    sorted
-    返回函数
-    匿名函数
-    装饰器
-    偏函数
+
+
+##### 2.2.1.2 filter
+
+Python內建函数`filter()`用于过滤序列(过滤和筛选作用)。和`map`类似，`filter()`也接收一个函数和一个序列。和`map()`不同的是，`filter()`把传入的函数依次作用于每个元素，然后根据返回值是`True`还是`False`决定保留还是丢弃该元素。
+
+```python
+# 举例： 删除list中的偶数，只保留奇数
+
+def is_odd(n):
+    return n % 2 == 1
+
+list(filter(is_odd, [1, 2, 3, 4, 5, 6, 7, 8]))
+
+```
+
+>用`filter()`求素数：不想看(⊙﹏⊙)
+
+### 练习
+回数是指从左向右读和从右向左读都是一样的数，例如12321，909。请利用`filter()`滤掉非回数：
+
+```python
+def is_palindrome(n):
+    list_numbers = list(str(n))
+    i = 0
+    j = len(list_numbers)
+    for item in list_numbers:
+        if list_numbers[i] != list_numbers[j-1]:
+            return False
+        else:
+            continue
+        i = i + 1
+        j = j - 1
+    return n
+output = filter(is_palindrome, range(1, 1000))
+print(list(output))
+
+```
+
+##### 2.2.1.3 sorted
+
+
+#### 2.2.2 返回函数
+
+
+#### 2.2.3 匿名函数
+
+
+#### 2.2.4 装饰器
+
+
+#### 2.2.5 偏函数
+
 
 ### 2.3 模块
 
-    使用模块
-    安装第三方模块
+
+#### 2.3.1 使用模块
+
+
+#### 2.3.2 安装第三方模块
 
 ## 3. 第三篇 Python进阶
 
 ### 3.1 面向对象编程
 
-    类和实例
-    访问限制
-    继承和多态
-    获取对象信息
-    实例属性和类属性
+#### 3.1.1 类和实例
+
+
+#### 3.1.2 访问限制
+
+#### 3.1.3 继承和多态
+
+#### 3.1.4 获取对象信息
+
+#### 3.1.5 实例属性和类属性
 
 ### 3.2 面向对象高级编程
 
-    使用__slots__
-    使用@property
-    多重继承
-    定制类
-    使用枚举类
-    使用元类
+#### 3.2.1 使用__slots__
+
+#### 3.2.2 使用@property
+
+#### 3.2.3 多重继承
+
+#### 3.2.4 定制类
+
+#### 3.2.5 使用枚举类
+
+#### 3.2.6 使用元类
 
 ### 3.3 错误、调试和测试
 
-    错误处理
-    调试
-    单元测试
-    文档测试
+#### 3.3.1 错误处理
+
+#### 3.3.2 调试
+
+#### 3.3.3 单元测试
+
+#### 3.3.4 文档测试
 
 ### 3.4 IO编程
 
-    文件读写
-    StringIO和BytesIO
-    操作文件和目录
-    序列化
+#### 3.4.1 文件读写
+
+#### 3.4.2 StringIO和BytesIO
+
+#### 3.4.3 操作文件和目录
+
+#### 3.4.4 序列化
 
 ### 3.5 进程和线程
 
-    多进程
-    多线程
-    ThreadLocal
-    进程 vs. 线程
-    分布式进程
+#### 3.5.1 多进程
+
+#### 3.5.2 多线程
+
+#### 3.5.3 ThreadLocal
+
+#### 3.5.4 进程 vs. 线程
+
+#### 3.5.5 分布式进程
 
 ### 3.6 正则表达式
 
 ### 3.7 常用内建模块
 
-    datetime
-    collections
-    base64
-    struct
-    hashlib
-    itertools
-    contextlib
-    XML
-    HTMLParser
-    urllib
+#### 3.7.1 datetime
+
+#### 3.7.2 collections
+
+#### 3.7.3 base64
+
+#### 3.7.4 struct
+
+#### 3.7.5 hashlib
+
+#### 3.7.6 itertools
+
+#### 3.7.7 contextlib
+
+#### 3.7.7 XML
+
+#### 3.7.8 HTMLParser
+
+#### 3.7.9 urllib
 
 ### 3.8 常用第三方模块
 
-    PIL
+#### 3.8.1 PIL
 
 ### 3.9 virtualenv
 
@@ -539,55 +752,83 @@ print(L2)
 
 ### 4.1 网络编程
 
-    TCP/IP简介
-    TCP编程
-    UDP编程
+#### 4.1.1 TCP/IP简介
+
+#### 4.1.2 TCP编程
+
+#### 4.1.3 UDP编程
 
 ### 4.2 电子邮件
 
-    SMTP发送邮件
-    POP3收取邮件
+#### 4.2.1 SMTP发送邮件
+
+#### 4.2.2 POP3收取邮件
 
 ### 4.3 访问数据库
 
-    使用SQLite
-    使用MySQL
-    使用SQLAlchemy
+#### 4.3.1 使用SQLite
+
+#### 4.3.2 使用MySQL
+
+#### 4.3.3 使用SQLAlchemy
 
 ### 4.4 Web开发
 
-    HTTP协议简介
-    HTML简介
-    WSGI接口
-    使用Web框架
-    使用模板
+#### 4.4.1 HTTP协议简介
+
+#### 4.4.2 HTML简介
+
+#### 4.4.3 WSGI接口
+
+#### 4.4.4 使用Web框架
+
+#### 4.4.5 使用模板
 
 ### 4.5 异步IO
 
-    协程
-    asyncio
-    async/await
-    aiohttp
+#### 4.5.1 协程
+
+#### 4.5.2 asyncio
+
+#### 4.5.3 async/await
+
+#### 4.5.4 aiohttp
 
 ## 5. 第五篇 Python实战
 
-    Day 1 - 搭建开发环境
-    Day 2 - 编写Web App骨架
-    Day 3 - 编写ORM
-    Day 4 - 编写Model
-    Day 5 - 编写Web框架
-    Day 6 - 编写配置文件
-    Day 7 - 编写MVC
-    Day 8 - 构建前端
-    Day 9 - 编写API
-    Day 10 - 用户注册和登录
-    Day 11 - 编写日志创建页
-    Day 12 - 编写日志列表页
-    Day 13 - 提升开发效率
-    Day 14 - 完成Web App
-    Day 15 - 部署Web App
-    Day 16 - 编写移动App
+### Day 1 - 搭建开发环境
+
+### Day 2 - 编写Web App骨架
+
+### Day 3 - 编写ORM
+
+### Day 4 - 编写Model
+
+### Day 5 - 编写Web框架
+
+### Day 6 - 编写配置文件
+
+### Day 7 - 编写MVC
+
+### Day 8 - 构建前端
+
+### Day 9 - 编写API
+
+### Day 10 - 用户注册和登录
+
+### Day 11 - 编写日志创建页
+
+### Day 12 - 编写日志列表页
+
+### Day 13 - 提升开发效率
+
+### Day 14 - 完成Web App
+
+### Day 15 - 部署Web App
+
+### Day 16 - 编写移动App
+
 
 ## 6. FAQ
 
-    期末总结
+### 期末总结
