@@ -630,6 +630,12 @@ def is_palindrome(n):
 output = filter(is_palindrome, range(1, 1000))
 print(list(output))
 
+
+# 方法二：参考 逍遥的老蒋
+# 把数值转换为字符串(强转)，并正序切分为每个字符，倒叙切分为每个字符，然后比较 e.g. 1234 正序切分为['1','2','3','4'],倒叙切分为['4','3','2','1'] 比较2个list是否相等
+def is_palindrome(n):
+    return str(n)[::1]==str(n)[::-1]
+
 ```
 
 ##### 2.2.1.3 sorted
